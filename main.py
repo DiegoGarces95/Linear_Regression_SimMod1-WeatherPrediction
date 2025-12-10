@@ -47,6 +47,7 @@ if __name__ == "__main__":
     plt.xlabel('Índice de muestra')
     plt.ylabel('Temperatura (°C)')
     plt.tight_layout()
+    plt.savefig('figures/real_vs_predicho.png')
     plt.show()
 
     # 5. Conclusiones y sugerencias

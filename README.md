@@ -125,6 +125,16 @@ Utilizar los valores de días anteriores permite obtener predicciones mucho más
 		 ```
 	 - El script principal está documentado paso a paso para aprendizaje y puedes personalizar cada etapa según tus necesidades.
 
+### 4. Visualización de resultados
+
+La siguiente gráfica muestra la comparación entre la temperatura real y la predicha por el modelo de regresión lineal (usando los valores de TG de los 3 días anteriores):
+
+![Temperatura real vs predicha](figures/real_vs_predicho.png)
+
+Puedes encontrar la imagen generada en la carpeta `figures/` después de ejecutar `main.py`.
+
+---
+
 ## Notas
 - Los datos con valores faltantes o erróneos (-9999) se eliminan automáticamente.
 - Las variables de temperatura, precipitación, viento y sol se convierten a sus unidades estándar (°C, mm, m/s, h).

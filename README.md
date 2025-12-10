@@ -76,6 +76,45 @@ Utilizar los valores de días anteriores permite obtener predicciones mucho más
 
 ---
 
+## Datos y flujo actualizado
+
+Este proyecto utiliza tres archivos CSV ya limpios y divididos por periodos:
+- `data/train_data.csv`: Entrenamiento (1957-2017)
+- `data/val_data.csv`: Validación (2018-2022)
+- `data/test_data.csv`: Prueba (2023-2025)
+
+La carga de datos se realiza con la función `load_datasets` en `src/data_loader.py`.
+
+## Experimentos realizados
+
+### 1. Regresión lineal simple
+- Predice la temperatura media diaria (TG) usando solo el valor de TG del día anterior (TG_lag1).
+- Resultados y gráfica guardados en:
+  - `linear_regression_predictions_simple.csv`
+  - `figures/tg_simple_real_vs_predicho.png`
+
+### 2. Regresión lineal múltiple
+- Predice TG usando las variables TN, TX y TG del mismo día.
+- Resultados y gráfica guardados en:
+  - `linear_regression_predictions_multi.csv`
+  - `figures/tg_multi_real_vs_predicho.png`
+
+### 3. Métricas de evaluación
+- MAE (Error absoluto medio)
+- RMSE (Raíz del error cuadrático medio)
+- R² (Coeficiente de determinación)
+
+## Ejecución
+
+Ejecuta `main.py` para cargar los datos, entrenar los modelos y generar los resultados y visualizaciones.
+
+## Visualización de resultados
+
+- ![TG real vs predicha (simple)](figures/tg_simple_real_vs_predicho.png)
+- ![TG real vs predicha (múltiple)](figures/tg_multi_real_vs_predicho.png)
+
+---
+
 ## Ejecución Paso a Paso
 
 1. Coloca los archivos de datos en la carpeta `data/`.
@@ -124,14 +163,6 @@ Utilizar los valores de días anteriores permite obtener predicciones mucho más
 		 python main.py
 		 ```
 	 - El script principal está documentado paso a paso para aprendizaje y puedes personalizar cada etapa según tus necesidades.
-
-### 4. Visualización de resultados
-
-La siguiente gráfica muestra la comparación entre la temperatura real y la predicha por el modelo de regresión lineal (usando los valores de TG de los 3 días anteriores):
-
-![Temperatura real vs predicha](figures/real_vs_predicho.png)
-
-Puedes encontrar la imagen generada en la carpeta `figures/` después de ejecutar `main.py`.
 
 ---
 

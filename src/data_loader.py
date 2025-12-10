@@ -1,4 +1,3 @@
-
 import pandas as pd
 import os
 
@@ -39,4 +38,16 @@ def create_lagged_features(df, n_lags=3):
     cols = ['DATE', 'TG'] + [f'TG_lag_{lag}' for lag in range(1, n_lags+1)]
     return df_lagged[cols]
 
-  
+def load_datasets(data_dir):
+    """
+    Carga los archivos train_data.csv, val_data.csv y test_data.csv desde el directorio indicado.
+    Devuelve tres DataFrames: train_df, val_df, test_df
+    """
+    train_path = os.path.join(data_dir, "train_data.csv")
+    val_path = os.path.join(data_dir, "val_data.csv")
+    test_path = os.path.join(data_dir, "test_data.csv")
+    train_df = pd.read_csv(train_path)
+    val_df = pd.read_csv(val_path)
+    test_df = pd.read_csv(test_path)
+    return train_df, val_df, test_df
+

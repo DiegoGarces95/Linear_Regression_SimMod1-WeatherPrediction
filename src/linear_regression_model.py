@@ -1,7 +1,7 @@
 """
 linear_regression_model.py
-Script para entrenamiento, evaluación y visualización de un modelo de regresión lineal múltiple.
-Incluye comentarios detallados para aprendizaje.
+Script for training, evaluation, and visualization of a multiple linear regression model.
+Includes detailed comments for learning.
 """
 import pandas as pd
 from sklearn.linear_model import LinearRegression
@@ -11,30 +11,30 @@ import os
 
 def train_and_evaluate(data, test_size=0.2, random_state=42):
     """
-    Entrena un modelo de regresión lineal múltiple para predecir la temperatura media (TG).
-    Divide los datos en entrenamiento y prueba, entrena el modelo y evalúa su desempeño.
-    Muestra métricas y una gráfica de resultados reales vs. predichos.
+    Trains a multiple linear regression model to predict mean temperature (TG).
+    Splits data into training and testing sets, trains the model, and evaluates its performance.
+    Displays metrics and a plot of actual vs. predicted results.
     """
-    # 1. Seleccionar variables predictoras y objetivo
+    # 1. Select predictor variables and target
     X = data.drop(columns=['DATE', 'TG'])
     y = data['TG']
 
-    # 2. Dividir en conjunto de entrenamiento y prueba
+    # 2. Split into training and testing sets
     from sklearn.model_selection import train_test_split
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=test_size, random_state=random_state
     )
 
-    # 3. Crear y entrenar el modelo
+    # 3. Create and train the model
     model = LinearRegression()
     model.fit(X_train, y_train)
 
-    # 4. Realizar predicciones
+    # 4. Make predictions
     y_pred = model.predict(X_test)
 
-    # 5. Evaluar el modelo con métricas estándar
+    # 5. Evaluate the model with standard metrics
     mae = mean_absolute_error(y_test, y_pred)
-    # Para compatibilidad con versiones antiguas de scikit-learn, calcular RMSE manualmente
+    # Calcluate RMSE manually for compatibility
     mse = mean_squared_error(y_test, y_pred)
     rmse = mse ** 0.5
     r2 = r2_score(y_test, y_pred)
@@ -42,14 +42,14 @@ def train_and_evaluate(data, test_size=0.2, random_state=42):
     print(f"RMSE: {rmse:.3f}")
     print(f"R2: {r2:.3f}")
 
-    # 6. Visualización de resultados
+    # 6. Result visualization
     plt.figure(figsize=(10,4))
-    plt.plot(y_test.values, label='Real', marker='o', linestyle='-', alpha=0.7)
-    plt.plot(y_pred, label='Predicho', marker='x', linestyle='--', alpha=0.7)
+    plt.plot(y_test.values, label='Actual', marker='o', linestyle='-', alpha=0.7)
+    plt.plot(y_pred, label='Predicted', marker='x', linestyle='--', alpha=0.7)
     plt.legend()
-    plt.title('Temperatura real vs predicha (conjunto de prueba)')
-    plt.xlabel('Índice de muestra')
-    plt.ylabel('Temperatura (°C)')
+    plt.title('Actual vs Predicted Temperature (Test Set)')
+    plt.xlabel('Sample Index')
+    plt.ylabel('Temperature (°C)')
     plt.tight_layout()
     plt.show()
 
@@ -57,13 +57,13 @@ def train_and_evaluate(data, test_size=0.2, random_state=42):
 
 def linear_regression_experiments(train_df, test_df, figures_dir="figures"):
     """
-    Realiza dos experimentos:
-    1. Regresión lineal simple: TG_lag1 -> TG
-    2. Regresión lineal múltiple: TN, TX, TG -> TG
-    Guarda resultados y gráficas.
+    Performs two experiments:
+    1. Simple Linear Regression: TG_lag1 -> TG
+    2. Multiple Linear Regression: TN, TX, TG -> TG
+    Saves results and plots.
     """
     os.makedirs(figures_dir, exist_ok=True)
-    # --- Regresión lineal simple ---
+    # --- Simple Linear Regression ---
     train_df["TG_lag1"] = train_df["TG"].shift(1)
     test_df["TG_lag1"] = test_df["TG"].shift(1)
     train_simple = train_df.dropna()
@@ -85,21 +85,21 @@ def linear_regression_experiments(train_df, test_df, figures_dir="figures"):
     })
     results_simple.to_csv("linear_regression_predictions_simple.csv", index=False)
     plt.figure(figsize=(10,4))
-    plt.plot(y_test_simple.values, label='Real', marker='o', linestyle='-', alpha=0.7)
-    plt.plot(pred_simple, label='Predicho', marker='x', linestyle='--', alpha=0.7)
+    plt.plot(y_test_simple.values, label='Actual', marker='o', linestyle='-', alpha=0.7)
+    plt.plot(pred_simple, label='Predicted', marker='x', linestyle='--', alpha=0.7)
     plt.legend()
-    plt.title('Regresión lineal simple: TG real vs predicha')
-    plt.xlabel('Índice de muestra')
-    plt.ylabel('Temperatura media (°C)')
+    plt.title('Simple Linear Regression: Actual vs Predicted TG')
+    plt.xlabel('Sample Index')
+    plt.ylabel('Mean Temperature (°C)')
     plt.tight_layout()
     plt.savefig(os.path.join(figures_dir, 'tg_simple_real_vs_predicho.png'))
     plt.close()
-    print("--- Regresión lineal simple ---")
+    print("--- Simple Linear Regression ---")
     print(f"MAE: {mae_simple:.3f}")
     print(f"RMSE: {rmse_simple:.3f}")
     print(f"R²: {r2_simple:.3f}")
-    print("Resultados guardados en linear_regression_predictions_simple.csv y figures/tg_simple_real_vs_predicho.png\n")
-    # --- Regresión lineal múltiple ---
+    print("Results saved in linear_regression_predictions_simple.csv and figures/tg_simple_real_vs_predicho.png\n")
+    # --- Multiple Linear Regression ---
     feature_cols = ["TN", "TX", "TG"]
     X_train_multi = train_df[feature_cols]
     y_train_multi = train_df["TG"]
@@ -118,17 +118,17 @@ def linear_regression_experiments(train_df, test_df, figures_dir="figures"):
     })
     results_multi.to_csv("linear_regression_predictions_multi.csv", index=False)
     plt.figure(figsize=(10,4))
-    plt.plot(y_test_multi.values, label='Real', marker='o', linestyle='-', alpha=0.7)
-    plt.plot(pred_multi, label='Predicho', marker='x', linestyle='--', alpha=0.7)
+    plt.plot(y_test_multi.values, label='Actual', marker='o', linestyle='-', alpha=0.7)
+    plt.plot(pred_multi, label='Predicted', marker='x', linestyle='--', alpha=0.7)
     plt.legend()
-    plt.title('Regresión lineal múltiple: TG real vs predicha')
-    plt.xlabel('Índice de muestra')
-    plt.ylabel('Temperatura media (°C)')
+    plt.title('Multiple Linear Regression: Actual vs Predicted TG')
+    plt.xlabel('Sample Index')
+    plt.ylabel('Mean Temperature (°C)')
     plt.tight_layout()
     plt.savefig(os.path.join(figures_dir, 'tg_multi_real_vs_predicho.png'))
     plt.close()
-    print("--- Regresión lineal múltiple ---")
+    print("--- Multiple Linear Regression ---")
     print(f"MAE: {mae_multi:.3f}")
     print(f"RMSE: {rmse_multi:.3f}")
     print(f"R²: {r2_multi:.3f}")
-    print("Resultados guardados en linear_regression_predictions_multi.csv y figures/tg_multi_real_vs_predicho.png\n")
+    print("Results saved in linear_regression_predictions_multi.csv and figures/tg_multi_real_vs_predicho.png\n")

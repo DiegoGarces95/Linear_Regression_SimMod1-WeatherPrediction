@@ -37,6 +37,45 @@ pip install pandas scikit-learn matplotlib
 ```
 
 
+## Resultados y Experimentos
+
+### 1. Carga y limpieza de datos
+
+- Se utilizó únicamente la temperatura media diaria (TG) del archivo `TG_SOUID121044_1.csv`.
+- Se eliminaron los valores faltantes (-9999).
+- Total de registros válidos: **24,867**.
+- Ejemplo de los primeros datos:
+
+|   DATE   |  TG  |
+|----------|------|
+|19570901  | 14.4 |
+|19570902  | 13.2 |
+|19570903  | 12.3 |
+|19570904  | 12.6 |
+|19570905  | 16.4 |
+
+### 2. Plan de experimentos
+
+- **Regresión lineal simple:** Usar solo TG para predecir la temperatura media.
+- **Regresión lineal múltiple:** Usar TG, TN y TX para comparar resultados.
+- Se incluirán gráficas de ajuste y métricas de desempeño.
+
+### 3. Regresión lineal con rezagos (lags)
+
+Se entrenó un modelo de regresión lineal para predecir la temperatura media diaria (TG) usando los valores de TG de los 3 días anteriores como variables predictoras.
+
+**Resultados:**
+- MAE: 1.779
+- RMSE: 2.267
+- R²: 0.892
+
+Esto muestra una mejora significativa respecto al modelo simple, ya que el modelo ahora captura la dependencia temporal de la serie.
+
+**Conclusión:**
+Utilizar los valores de días anteriores permite obtener predicciones mucho más precisas y coherentes para la temperatura media diaria.
+
+---
+
 ## Ejecución Paso a Paso
 
 1. Coloca los archivos de datos en la carpeta `data/`.

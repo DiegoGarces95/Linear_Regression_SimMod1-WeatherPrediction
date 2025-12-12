@@ -8,6 +8,13 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 import matplotlib.pyplot as plt
 import os
+import numpy as np
+import random
+
+# Set random seed for reproducibility
+SEED = 42
+random.seed(SEED)
+np.random.seed(SEED)
 
 def train_and_evaluate(data, test_size=0.2, random_state=42):
     """
@@ -64,20 +71,30 @@ def linear_regression_experiments(train_df, test_df, figures_dir="figures"):
     """
     os.makedirs(figures_dir, exist_ok=True)
     # --- Simple Linear Regression ---
-    train_df["TG_lag1"] = train_df["TG"].shift(1)
-    test_df["TG_lag1"] = test_df["TG"].shift(1)
-    train_simple = train_df.dropna()
-    test_simple = test_df.dropna()
+    # Combine train and test to create proper lag features
+    combined_df = pd.concat([train_df, test_df], ignore_index=True)
+    
+    # Create lag feature on combined data
+    combined_df["TG_lag1"] = combined_df["TG"].shift(1)
+    
+    # Now split back into train and test
+    n_train = len(train_df)
+    train_simple = combined_df[:n_train].dropna() # Remove first row of train (no lag)
+    test_simple = combined_df[n_train:].copy()   # Test keeps all rows (has lag from last train value)
+
     X_train_simple = train_simple[["TG_lag1"]]
     y_train_simple = train_simple["TG"]
     X_test_simple = test_simple[["TG_lag1"]]
     y_test_simple = test_simple["TG"]
+    
     model_simple = LinearRegression()
     model_simple.fit(X_train_simple, y_train_simple)
     pred_simple = model_simple.predict(X_test_simple)
+    
     mae_simple = mean_absolute_error(y_test_simple, pred_simple)
     rmse_simple = mean_squared_error(y_test_simple, pred_simple) ** 0.5
     r2_simple = r2_score(y_test_simple, pred_simple)
+    
     results_simple = pd.DataFrame({
         "date": test_simple["DATE"],
         "actual_TG": y_test_simple,
@@ -99,24 +116,48 @@ def linear_regression_experiments(train_df, test_df, figures_dir="figures"):
     print(f"RMSE: {rmse_simple:.3f}")
     print(f"R²: {r2_simple:.3f}")
     print("Results saved in linear_regression_predictions_simple.csv and figures/tg_simple_real_vs_predicho.png\n")
-    # --- Multiple Linear Regression ---
-    feature_cols = ["TN", "TX", "TG"]
-    X_train_multi = train_df[feature_cols]
-    y_train_multi = train_df["TG"]
-    X_test_multi = test_df[feature_cols]
-    y_test_multi = test_df["TG"]
+    # --- Multiple Linear Regression (CORRECTED) ---
+    # Combine train and test to create proper lag features across datasets
+    combined_df = pd.concat([train_df, test_df], ignore_index=True)
+    
+    # Create lagged features from yesterday's weather
+    combined_df["TN_lag1"] = combined_df["TN"].shift(1)
+    combined_df["TX_lag1"] = combined_df["TX"].shift(1)
+    combined_df["TG_lag1"] = combined_df["TG"].shift(1)
+    
+    # Split back into train and test
+    n_train = len(train_df)
+    train_multi = combined_df[:n_train].dropna()  # Remove first row (no lag available)
+    test_multi = combined_df[n_train:].copy()  # Keep all test rows (has lag from last train value)
+    
+    # Prepare features and targets
+    feature_cols = ["TN_lag1", "TX_lag1", "TG_lag1"]
+    X_train_multi = train_multi[feature_cols]
+    y_train_multi = train_multi["TG"]
+    X_test_multi = test_multi[feature_cols]
+    y_test_multi = test_multi["TG"]
+    
+    # Train model
     model_multi = LinearRegression()
     model_multi.fit(X_train_multi, y_train_multi)
+    
+    # Make predictions
     pred_multi = model_multi.predict(X_test_multi)
+    
+    # Calculate metrics
     mae_multi = mean_absolute_error(y_test_multi, pred_multi)
     rmse_multi = mean_squared_error(y_test_multi, pred_multi) ** 0.5
     r2_multi = r2_score(y_test_multi, pred_multi)
+    
+    # Save results
     results_multi = pd.DataFrame({
-        "date": test_df["DATE"],
+        "date": test_multi["DATE"],
         "actual_TG": y_test_multi,
         "predicted_TG": pred_multi
     })
     results_multi.to_csv("linear_regression_predictions_multi.csv", index=False)
+    
+    # Visualization
     plt.figure(figsize=(10,4))
     plt.plot(y_test_multi.values, label='Actual', marker='o', linestyle='-', alpha=0.7)
     plt.plot(pred_multi, label='Predicted', marker='x', linestyle='--', alpha=0.7)
@@ -127,6 +168,7 @@ def linear_regression_experiments(train_df, test_df, figures_dir="figures"):
     plt.tight_layout()
     plt.savefig(os.path.join(figures_dir, 'tg_multi_real_vs_predicho.png'))
     plt.close()
+    
     print("--- Multiple Linear Regression ---")
     print(f"MAE: {mae_multi:.3f}")
     print(f"RMSE: {rmse_multi:.3f}")

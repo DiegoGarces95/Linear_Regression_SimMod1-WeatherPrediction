@@ -38,10 +38,10 @@ The project implements two experimental approaches to linear regression to demon
 *   **Type**: Time series forecasting.
 *   **Validity**: This is a valid predictive approach as it uses past data to predict the future.
 
-### 2. Multiple Linear Regression (Correlation Analysis)
-*   **Goal**: Predict mean temperature (`TG`) using Minimum (`TN`) and Maximum (`TX`) temperatures, and the Mean temperature (`TG`) of the *same day*.
-*   **Observation**: By including the target variable (`TG`) or its direct components within the predictors, the model achieves near-perfect performance.
-*   **Note on Data Leakage**: In a real-world predictive scenario where we want to know *tomorrow's* temperature, this approach would represent **data leakage**, as we wouldn't have access to tomorrow's `TN`, `TX`, or `TG` yet. However, this serves as a mathematical demonstration of the correlation between these variables.
+### 2. Multiple Linear Regression (Forecasting with Multiple Features)
+*   **Goal**: Predict today's mean temperature (`TG`) using *yesterday's* minimum (`TN_lag1`), maximum (`TX_lag1`), and mean (`TG_lag1`) temperatures.
+*   **Type**: Time series forecasting with multiple predictors.
+*   **Validity**: This is a valid predictive approach as it uses historical data from the previous day to predict today's temperature, avoiding data leakage.
 
 ## Results
 
@@ -49,8 +49,10 @@ The following table summarizes the performance of the models on the test set (20
 
 | Experiment | MAE | RMSE | R² Score |
 | :--- | :--- | :--- | :--- |
-| **Simple Regression** (TG_lag1 -> TG) | 17.613 | 22.615 | 0.880 |
-| **Multiple Regression** (TN, TX, TG -> TG) | 0.000 | 0.000 | 1.000 |
+| **Simple Regression** (TG_lag1 → TG) | 17.606 | 22.607 | 0.880 |
+| **Multiple Regression** (TN_lag1, TX_lag1, TG_lag1 → TG) | 17.205 | 22.204 | 0.885 |
+
+> **Note**: Both models now use valid forecasting approaches with lagged features, avoiding data leakage.
 
 ### Visualizations
 

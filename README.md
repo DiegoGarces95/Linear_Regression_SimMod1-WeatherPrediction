@@ -57,10 +57,10 @@ The following table summarizes the performance of the models on the test set (20
 ### Visualizations
 
 #### Simple Linear Regression: Real vs Predicted
-![Simple Regression Results](figures/tg_simple_real_vs_predicho.png)
+![Simple Regression Results](https://raw.githubusercontent.com/DiegoGarces95/Linear_Regression_SimMod1-WeatherPrediction/main/figures/tg_simple_real_vs_predicho.png)
 
 #### Multiple Linear Regression: Real vs Predicted
-![Multiple Regression Results](figures/tg_multi_real_vs_predicho.png)
+![Multiple Regression Results](https://raw.githubusercontent.com/DiegoGarces95/Linear_Regression_SimMod1-WeatherPrediction/main/figures/tg_multi_real_vs_predicho.png)
 
 ## Execution
 
